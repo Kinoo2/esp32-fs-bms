@@ -1,3 +1,4 @@
+#include <esp_err.h>
 #include <esp_littlefs.h>
 #include <esp_log.h>
 #include <esp_spi_flash.h>
@@ -34,12 +35,77 @@ void app_main(void) {
            (chip_info.features & CHIP_FEATURE_EMB_FLASH) ? "embedded"
                                                          : "external",
            esp_get_free_heap_size());
+
+  init_lfs();
+  init_spiffs();
 }
 
 void init_lfs() {
-  //
+  ESP_LOGI(TAG, "Initializing LittleFS");
+
+  esp_vfs_littlefs_conf_t cfg;
+  cfg.base_path              = "/lfs";
+  cfg.partition_label        = "littlefs";
+  cfg.format_if_mount_failed = true;
+  cfg.dont_mount             = false;
+  auto ret                   = esp_vfs_littlefs_register(&cfg);
+
+  if (ret == ESP_FAIL) {
+    ESP_LOGE(TAG, "Failed to mount or format LittleFS filesystem");
+    abort();
+  }
+  else if (ret == ESP_ERR_NOT_FOUND) {
+    ESP_LOGE(TAG, "Failed to find LittleFS partition");
+    abort();
+  }
+  else if (ret != ESP_OK) {
+    ESP_LOGE(TAG, "Failed to initialize LittleFS (%s)", esp_err_to_name(ret));
+    abort();
+  }
+
+  size_t total = 0, used = 0;
+  ret = esp_littlefs_info(cfg.partition_label, &total, &used);
+  if (ret != ESP_OK) {
+    ESP_LOGE(TAG,
+             "Failed to get LittleFS partition information (%s)",
+             esp_err_to_name(ret));
+  }
+  else {
+    ESP_LOGI(TAG, "LittleFS partition size| total: %d, used: %d", total, used);
+  }
 }
 
 void init_spiffs() {
-  //
+  ESP_LOGI(TAG, "Initializing SPIFFS");
+
+  esp_vfs_spiffs_conf_t cfg;
+  cfg.base_path              = "/spiffs";
+  cfg.partition_label        = "spiffs";
+  cfg.format_if_mount_failed = true;
+  cfg.max_files              = 50;
+  auto ret                   = esp_vfs_spiffs_register(&cfg);
+
+  if (ret == ESP_FAIL) {
+    ESP_LOGE(TAG, "Failed to mount or format SPIFFS filesystem");
+    abort();
+  }
+  else if (ret == ESP_ERR_NOT_FOUND) {
+    ESP_LOGE(TAG, "Failed to find SPIFFS partition");
+    abort();
+  }
+  else if (ret != ESP_OK) {
+    ESP_LOGE(TAG, "Failed to initialize SPIFFS (%s)", esp_err_to_name(ret));
+    abort();
+  }
+
+  size_t total = 0, used = 0;
+  ret = esp_spiffs_info(cfg.partition_label, &total, &used);
+  if (ret != ESP_OK) {
+    ESP_LOGE(TAG,
+             "Failed to get SPIFFS partition information (%s)",
+             esp_err_to_name(ret));
+  }
+  else {
+    ESP_LOGI(TAG, "SPIFFS partition size| total: %d, used: %d", total, used);
+  }
 }
