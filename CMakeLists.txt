@@ -2,9 +2,13 @@
 # CMakeLists in this exact order for cmake to work correctly
 cmake_minimum_required(VERSION 3.5)
 
-set(COMPONENTS esp-common
-               esptool_py
-               main)
+set(COMPONENTS
+  esp-common
+  esptool_py
+  main
+
+  esp_littlefs
+)
 
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 add_compile_options(-fdiagnostics-color=always)
