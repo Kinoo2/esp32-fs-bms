@@ -5,18 +5,28 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 
+using namespace std;
+
 static const char* TAG = "spiffs_helpers";
-void init_spiffs() {
+
+SpiffsHelper::SpiffsHelper(const int maxFiles,
+                           const string& basePath,
+                           const string& partitionLabel,
+                           const bool formatIfMountFailed)
+  : _maxFiles{maxFiles},
+    _basePath{basePath},
+    _partitionLabel{partitionLabel},
+    _formatIfMountFailed{formatIfMountFailed} {
   ESP_LOGI(TAG, "Initializing SPIFFS");
 
   auto heap_start = esp_get_free_heap_size();
   auto start      = xTaskGetTickCount();
 
   esp_vfs_spiffs_conf_t cfg;
-  cfg.base_path              = "/spiffs";
-  cfg.partition_label        = "spiffs";
-  cfg.format_if_mount_failed = true;
-  cfg.max_files              = 50;
+  cfg.base_path              = _basePath.c_str();
+  cfg.partition_label        = _partitionLabel.c_str();
+  cfg.format_if_mount_failed = _formatIfMountFailed;
+  cfg.max_files              = _maxFiles;
   auto ret                   = esp_vfs_spiffs_register(&cfg);
 
   auto end      = xTaskGetTickCount();

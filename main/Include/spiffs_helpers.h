@@ -2,15 +2,17 @@
 #define SPIFFS_HELPERS_H
 #include <string>
 
-void init_spiffs();
+class SpiffsHelper {
+public:
+  SpiffsHelper(const int maxFiles                = 50,
+               const std::string& basePath       = "/spiffs",
+               const std::string& partitionLabel = "spiffs",
+               const bool formatIfMountFailed    = true);
 
-// class SpiffsHelper {
-// public:
-//   SpiffsHelper(int maxFiles                = 50,
-//                const std::string& basePath = "/spiffs",
-//                const std::string& label    = "spiffs",
-//                bool formatIfMountFailed    = true);
-
-// private:
-// };
+private:
+  const int _maxFiles;
+  const std::string& _basePath;
+  const std::string& _partitionLabel;
+  const bool _formatIfMountFailed;
+};
 #endif // SPIFFS_HELPERS_H

@@ -37,5 +37,9 @@ void app_main(void) {
            esp_get_free_heap_size());
 
   LfsHelper lfs;
-  init_spiffs();
+  SpiffsHelper spiffs;
+
+  ESP_LOGI(TAG, "Free Heap: %d", esp_get_free_heap_size());
+  ESP_LOGI(TAG, "sizeof(LfsHelper): %d", sizeof(LfsHelper));
+  ESP_LOGI(TAG, "sizeof(SpiffsHelper): %d", sizeof(SpiffsHelper));
 }
