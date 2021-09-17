@@ -36,6 +36,6 @@ void app_main(void) {
                                                          : "external",
            esp_get_free_heap_size());
 
-  init_lfs();
+  LfsHelper lfs;
   init_spiffs();
 }

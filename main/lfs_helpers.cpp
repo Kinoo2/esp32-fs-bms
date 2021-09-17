@@ -5,19 +5,28 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 
+using namespace std;
+
 static const char* TAG = "lfs_helpers";
 
-void init_lfs() {
+LfsHelper::LfsHelper(const string& basePath,
+                     const string& partitionLabel,
+                     const bool formatIfMountFailed,
+                     const bool dontMount)
+  : _basePath{basePath},
+    _partitionLabel{partitionLabel},
+    _formatIfMountFailed{formatIfMountFailed},
+    _dontMount{dontMount} {
   ESP_LOGI(TAG, "Initializing LittleFS");
 
   auto heap_start = esp_get_free_heap_size();
   auto start      = xTaskGetTickCount();
 
   esp_vfs_littlefs_conf_t cfg;
-  cfg.base_path              = "/lfs";
-  cfg.partition_label        = "littlefs";
-  cfg.format_if_mount_failed = true;
-  cfg.dont_mount             = false;
+  cfg.base_path              = _basePath.c_str();
+  cfg.partition_label        = _partitionLabel.c_str();
+  cfg.format_if_mount_failed = _formatIfMountFailed;
+  cfg.dont_mount             = _dontMount;
   auto ret                   = esp_vfs_littlefs_register(&cfg);
 
   auto end      = xTaskGetTickCount();
