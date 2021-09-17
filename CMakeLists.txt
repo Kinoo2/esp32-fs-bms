@@ -8,6 +8,7 @@ set(COMPONENTS
   main
 
   esp_littlefs
+  spiffs
 )
 
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
