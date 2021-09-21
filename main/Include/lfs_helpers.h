@@ -1,8 +1,11 @@
 #ifndef LFS_HELPERS_H
 #define LFS_HELPERS_H
+
+#include "FsHelperBase.h"
+
 #include <string>
 
-class LfsHelper {
+class LfsHelper : public FsHelperBase {
 public:
   LfsHelper(const std::string& basePath       = "/lfs",
             const std::string& partitionLabel = "littlefs",
@@ -10,9 +13,6 @@ public:
             const bool dontMount              = false);
 
 private:
-  const std::string& _basePath;
-  const std::string& _partitionLabel;
-  const bool _formatIfMountFailed;
   const bool _dontMount;
 };
 

@@ -1,8 +1,11 @@
 #ifndef SPIFFS_HELPERS_H
 #define SPIFFS_HELPERS_H
+
+#include "FsHelperBase.h"
+
 #include <string>
 
-class SpiffsHelper {
+class SpiffsHelper : public FsHelperBase {
 public:
   SpiffsHelper(const int maxFiles                = 50,
                const std::string& basePath       = "/spiffs",
@@ -11,8 +14,5 @@ public:
 
 private:
   const int _maxFiles;
-  const std::string& _basePath;
-  const std::string& _partitionLabel;
-  const bool _formatIfMountFailed;
 };
 #endif // SPIFFS_HELPERS_H

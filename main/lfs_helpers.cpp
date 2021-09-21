@@ -13,9 +13,7 @@ LfsHelper::LfsHelper(const string& basePath,
                      const string& partitionLabel,
                      const bool formatIfMountFailed,
                      const bool dontMount)
-  : _basePath{basePath},
-    _partitionLabel{partitionLabel},
-    _formatIfMountFailed{formatIfMountFailed},
+  : FsHelperBase(basePath, partitionLabel, formatIfMountFailed),
     _dontMount{dontMount} {
   ESP_LOGI(TAG, "Initializing LittleFS");
 
