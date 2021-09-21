@@ -12,7 +12,8 @@ public:
       _partitionLabel{partitionLabel},
       _formatIfMountFailed{formatIfMountFailed} {}
 
-  bool Write(uint32_t numBytes);
+  void WriteText(uint32_t numBytes);
+  void WriteBin(uint32_t numBytes);
 
 protected:
   const std::string& _basePath;
