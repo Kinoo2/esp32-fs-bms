@@ -3,6 +3,7 @@
 
 #include <string>
 #include <esp_err.h>
+#include <esp_heap_trace.h>
 #include <esp_log.h>
 #include <esp_spi_flash.h>
 #include <esp_system.h>
@@ -15,7 +16,12 @@ extern "C" void app_main(void);
 
 static const char* TAG = "main";
 
+#define TRACE_RECORD_COUNT 300
+static heap_trace_record_t traceRecord[TRACE_RECORD_COUNT];
+
 void app_main(void) {
+  heap_trace_init_standalone(traceRecord, TRACE_RECORD_COUNT);
+
   esp_chip_info_t chip_info;
   esp_chip_info(&chip_info);
   ESP_LOGI(TAG,
@@ -38,6 +44,9 @@ void app_main(void) {
 
   LfsHelper lfs;
   SpiffsHelper spiffs;
+
+  lfs.WriteText(88);
+  spiffs.WriteText(88);
 
   ESP_LOGI(TAG, "Free Heap: %d", esp_get_free_heap_size());
   ESP_LOGI(TAG, "sizeof(LfsHelper): %d", sizeof(LfsHelper));
