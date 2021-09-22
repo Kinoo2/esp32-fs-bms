@@ -43,10 +43,16 @@ void app_main(void) {
            esp_get_free_heap_size());
 
   LfsHelper lfs;
-  SpiffsHelper spiffs;
+  SpiffsHelper spiffs{100};
 
-  lfs.WriteText(88);
-  spiffs.WriteText(88);
+  int writeSize = 100000;
+  for (int i = 0; i < 10; i++) {
+    printf(
+      "====================================================================="
+      "===========\n");
+    lfs.WriteText(writeSize);
+    spiffs.WriteText(writeSize);
+  }
 
   ESP_LOGI(TAG, "Free Heap: %d", esp_get_free_heap_size());
   ESP_LOGI(TAG, "sizeof(LfsHelper): %d", sizeof(LfsHelper));
