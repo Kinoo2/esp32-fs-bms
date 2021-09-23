@@ -1,6 +1,7 @@
 #include "lfs_helpers.h"
 #include "spiffs_helpers.h"
 
+#include <locale>
 #include <string>
 #include <esp_err.h>
 #include <esp_heap_trace.h>
@@ -19,8 +20,14 @@ static const char* TAG = "main";
 #define TRACE_RECORD_COUNT 300
 static heap_trace_record_t traceRecord[TRACE_RECORD_COUNT];
 
+static const int writeSize  = 100000;
+static const int iterations = 60;
+static const int maxFiles   = 100;
+
 void app_main(void) {
   heap_trace_init_standalone(traceRecord, TRACE_RECORD_COUNT);
+
+  setlocale(LC_NUMERIC, "");
 
   esp_chip_info_t chip_info;
   esp_chip_info(&chip_info);
@@ -43,17 +50,34 @@ void app_main(void) {
            esp_get_free_heap_size());
 
   LfsHelper lfs;
-  SpiffsHelper spiffs{30};
+  SpiffsHelper spiffs{maxFiles};
 
-  int writeSize  = 100000;
-  int iterations = 30;
+  /** WRITE (fprintf) **/
   for (int i = 0; i < iterations; i++) {
-    printf("\e[0;34m====Iteration: %03d====\n\e[0m", i);
+    printf("\e[0;34m====Write: %03d====\n\e[0m", i);
     lfs.WriteText(writeSize);
     spiffs.WriteText(writeSize);
   }
 
+  /** READ (getc) **/
+  for (int i = 0; i < iterations; i++) {
+    printf("\e[0;34m====Read: %03d====\n\e[0m", i);
+    lfs.ReadText(i);
+    spiffs.ReadText(i);
+  }
+
+  /** DELETE (remove) **/
+  for (int i = 0; i < iterations; i++) {
+    printf("\e[0;34m====Delete: %03d====\n\e[0m", i);
+    lfs.DeleteFile(i);
+    spiffs.DeleteFile(i);
+  }
+
   ESP_LOGI(TAG, "Free Heap: %d", esp_get_free_heap_size());
-  ESP_LOGI(TAG, "sizeof(LfsHelper): %d", sizeof(LfsHelper));
-  ESP_LOGI(TAG, "sizeof(SpiffsHelper): %d", sizeof(SpiffsHelper));
+  ESP_LOGI(TAG,
+           "Largest Block: %d",
+           heap_caps_get_largest_free_block(MALLOC_CAP_8BIT));
+  ESP_LOGI(TAG,
+           "Minimum Heap Size: %d",
+           heap_caps_get_minimum_free_size(MALLOC_CAP_8BIT));
 }

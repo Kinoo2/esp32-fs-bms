@@ -2,8 +2,8 @@
 
 #include <esp_littlefs.h>
 #include <esp_log.h>
-#include <freertos/FreeRTOS.h>
-#include <freertos/task.h>
+#include <esp_system.h>
+#include <esp_timer.h>
 
 using namespace std;
 
@@ -23,7 +23,7 @@ LfsHelper::LfsHelper(const string& basePath,
            _partitionLabel.c_str());
 
   auto heap_start = esp_get_free_heap_size();
-  auto start      = xTaskGetTickCount();
+  auto start      = esp_timer_get_time();
 
   esp_vfs_littlefs_conf_t cfg;
   cfg.base_path              = _basePath.c_str();
@@ -32,7 +32,7 @@ LfsHelper::LfsHelper(const string& basePath,
   cfg.dont_mount             = _dontMount;
   auto ret                   = esp_vfs_littlefs_register(&cfg);
 
-  auto end      = xTaskGetTickCount();
+  auto end      = esp_timer_get_time();
   auto heap_end = esp_get_free_heap_size();
 
   if (ret == ESP_FAIL) {
@@ -48,7 +48,7 @@ LfsHelper::LfsHelper(const string& basePath,
     abort();
   }
 
-  ESP_LOGI(TAG, "Initialized LittleFS in %d ms", (end - start) * 10);
+  ESP_LOGI(TAG, "Initialized LittleFS in %lld μs", end - start);
   ESP_LOGI(TAG, "Net bytes allocated: %d", heap_start - heap_end);
 
   size_t total = 0, used = 0;

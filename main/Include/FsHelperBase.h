@@ -12,8 +12,12 @@ public:
       _partitionLabel{partitionLabel},
       _formatIfMountFailed{formatIfMountFailed} {}
 
-  void WriteText(uint32_t numBytes);
-  void WriteBin(uint32_t numBytes);
+  int64_t WriteText(uint32_t numBytes);
+  // void WriteBin(uint32_t numBytes);
+
+  int64_t ReadText(int fileId);
+
+  void DeleteFile(int fileId);
 
 protected:
   const std::string& _basePath;
@@ -24,5 +28,6 @@ private:
   uint32_t _fileIndex = 0;
 
   std::string getNextName();
+  std::string getPath(int fileId);
 };
 #endif // FS_HELPER_BASE_H

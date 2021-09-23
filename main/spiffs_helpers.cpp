@@ -2,8 +2,8 @@
 
 #include <esp_log.h>
 #include <esp_spiffs.h>
-#include <freertos/FreeRTOS.h>
-#include <freertos/task.h>
+#include <esp_system.h>
+#include <esp_timer.h>
 
 using namespace std;
 
@@ -25,7 +25,7 @@ SpiffsHelper::SpiffsHelper(const int maxFiles,
            _maxFiles);
 
   auto heap_start = esp_get_free_heap_size();
-  auto start      = xTaskGetTickCount();
+  auto start      = esp_timer_get_time();
 
   esp_vfs_spiffs_conf_t cfg;
   cfg.base_path              = _basePath.c_str();
@@ -34,7 +34,7 @@ SpiffsHelper::SpiffsHelper(const int maxFiles,
   cfg.max_files              = _maxFiles;
   auto ret                   = esp_vfs_spiffs_register(&cfg);
 
-  auto end      = xTaskGetTickCount();
+  auto end      = esp_timer_get_time();
   auto heap_end = esp_get_free_heap_size();
 
   if (ret == ESP_FAIL) {
@@ -50,7 +50,7 @@ SpiffsHelper::SpiffsHelper(const int maxFiles,
     abort();
   }
 
-  ESP_LOGI(TAG, "Initialized SPIFFS in %d ms", (end - start) * 10);
+  ESP_LOGI(TAG, "Initialized SPIFFS in %lld μs", end - start);
   ESP_LOGI(TAG, "Net bytes allocated: %d", heap_start - heap_end);
 
   size_t total = 0, used = 0;
