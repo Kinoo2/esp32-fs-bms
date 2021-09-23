@@ -15,7 +15,12 @@ LfsHelper::LfsHelper(const string& basePath,
                      const bool dontMount)
   : FsHelperBase(basePath, partitionLabel, formatIfMountFailed),
     _dontMount{dontMount} {
-  ESP_LOGI(TAG, "Initializing LittleFS");
+  ESP_LOGI(TAG,
+           "Initializing LittleFS\n"
+           "\t\tBase Path: %s\n"
+           "\t\tPartition Label: %s",
+           _basePath.c_str(),
+           _partitionLabel.c_str());
 
   auto heap_start = esp_get_free_heap_size();
   auto start      = xTaskGetTickCount();

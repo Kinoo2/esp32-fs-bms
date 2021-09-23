@@ -20,7 +20,7 @@ void FsHelperBase::WriteText(uint32_t numBytes) {
   }
   auto name = getNextName();
 
-  // heap_trace_start(HEAP_TRACE_ALL);
+  heap_trace_start(HEAP_TRACE_ALL);
   auto start = xTaskGetTickCount();
   FILE* f    = fopen(name.c_str(), "w");
   if (f == nullptr) {
@@ -31,7 +31,7 @@ void FsHelperBase::WriteText(uint32_t numBytes) {
   auto numWritten = fprintf(f, "%*.*s", numBytes, numBytes, lipsum);
   fclose(f);
   auto end = xTaskGetTickCount();
-  // heap_trace_stop();
+  heap_trace_stop();
   // heap_trace_dump();
 
   ESP_LOGI(TAG,
@@ -43,7 +43,7 @@ void FsHelperBase::WriteText(uint32_t numBytes) {
 }
 
 string FsHelperBase::getNextName() {
-  uint32_t width = 10;
+  uint32_t width = 4;
   char filenameStr[width + 1];
   snprintf(filenameStr, width + 1, "%0*d", width, _fileIndex);
   _fileIndex++;

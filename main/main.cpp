@@ -43,13 +43,12 @@ void app_main(void) {
            esp_get_free_heap_size());
 
   LfsHelper lfs;
-  SpiffsHelper spiffs{100};
+  SpiffsHelper spiffs{30};
 
-  int writeSize = 100000;
-  for (int i = 0; i < 10; i++) {
-    printf(
-      "====================================================================="
-      "===========\n");
+  int writeSize  = 100000;
+  int iterations = 30;
+  for (int i = 0; i < iterations; i++) {
+    printf("\e[0;34m====Iteration: %03d====\n\e[0m", i);
     lfs.WriteText(writeSize);
     spiffs.WriteText(writeSize);
   }

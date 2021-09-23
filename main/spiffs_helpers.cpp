@@ -15,7 +15,14 @@ SpiffsHelper::SpiffsHelper(const int maxFiles,
                            const bool formatIfMountFailed)
   : FsHelperBase(basePath, partitionLabel, formatIfMountFailed),
     _maxFiles{maxFiles} {
-  ESP_LOGI(TAG, "Initializing SPIFFS");
+  ESP_LOGI(TAG,
+           "Initializing SPIFFS\n"
+           "\t\tBase Path: %s\n"
+           "\t\tPartition Label: %s\n"
+           "\t\tMax Files: %d",
+           _basePath.c_str(),
+           _partitionLabel.c_str(),
+           _maxFiles);
 
   auto heap_start = esp_get_free_heap_size();
   auto start      = xTaskGetTickCount();
