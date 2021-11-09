@@ -64,12 +64,18 @@ int64_t FsHelperBase::ReadText(int fileId) {
     return -1;
   }
 
-  while (fgetc(f) != EOF) {
+  int x = fgetc(f);
+  int i = 0;
+  while ((x != EOF) && (i < 100)) {
+    putc((char)x, stdout);
     fsize++;
+    i++;
+    x = fgetc(f);
   }
   fclose(f);
 
   auto end = esp_timer_get_time();
+  putc('\n', stdout);
   // heap_trace_stop();
   // heap_trace_dump();
 

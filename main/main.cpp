@@ -21,8 +21,8 @@ static const char* TAG = "main";
 static heap_trace_record_t traceRecord[TRACE_RECORD_COUNT];
 
 static const int writeSize  = 100000;
-static const int iterations = 60;
-static const int maxFiles   = 100;
+static const int iterations = 10;
+static const int maxFiles   = 60;
 
 void app_main(void) {
   heap_trace_init_standalone(traceRecord, TRACE_RECORD_COUNT);
@@ -67,11 +67,11 @@ void app_main(void) {
   }
 
   /** DELETE (remove) **/
-  for (int i = 0; i < iterations; i++) {
-    printf("\e[0;34m====Delete: %03d====\n\e[0m", i);
-    lfs.DeleteFile(i);
-    spiffs.DeleteFile(i);
-  }
+  // for (int i = 0; i < iterations; i++) {
+  //   printf("\e[0;34m====Delete: %03d====\n\e[0m", i);
+  //   lfs.DeleteFile(i);
+  //   spiffs.DeleteFile(i);
+  // }
 
   ESP_LOGI(TAG, "Free Heap: %d", esp_get_free_heap_size());
   ESP_LOGI(TAG,
