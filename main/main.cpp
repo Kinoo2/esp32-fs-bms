@@ -21,7 +21,7 @@ static const char* TAG = "main";
 static heap_trace_record_t traceRecord[TRACE_RECORD_COUNT];
 
 static const int writeSize  = 100000;
-static const int iterations = 10;
+static const int iterations = 15;
 static const int maxFiles   = 60;
 
 void app_main(void) {
@@ -52,19 +52,24 @@ void app_main(void) {
   LfsHelper lfs;
   SpiffsHelper spiffs{maxFiles};
 
+  int fileId = 3;
+
   /** WRITE (fprintf) **/
+  lfs.openFile(fileId);
+  spiffs.openFile(fileId);
   for (int i = 0; i < iterations; i++) {
     printf("\e[0;34m====Write: %03d====\n\e[0m", i);
-    lfs.WriteText(writeSize);
-    spiffs.WriteText(writeSize);
+    auto txt = std::to_string(i) + "\n";
+    lfs.writeToFile(txt.c_str(), txt.size());
+    spiffs.writeToFile(txt.c_str(), txt.size());
   }
 
-  /** READ (getc) **/
-  for (int i = 0; i < iterations; i++) {
-    printf("\e[0;34m====Read: %03d====\n\e[0m", i);
-    lfs.ReadText(i);
-    spiffs.ReadText(i);
-  }
+  // /** READ (getc) **/
+  // for (int i = 0; i < 1; i++) {
+  printf("\e[0;34m====Read: %03d====\n\e[0m", 1);
+  lfs.ReadText(fileId);
+  spiffs.ReadText(fileId);
+  // }
 
   /** DELETE (remove) **/
   // for (int i = 0; i < iterations; i++) {
