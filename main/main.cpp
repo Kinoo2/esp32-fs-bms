@@ -52,14 +52,14 @@ void app_main(void) {
   LfsHelper lfs;
   SpiffsHelper spiffs{maxFiles};
 
-  int fileId = 3;
+  int fileId = 1;
 
   /** WRITE (fprintf) **/
   lfs.openFile(fileId);
   spiffs.openFile(fileId);
   for (int i = 0; i < iterations; i++) {
     printf("\e[0;34m====Write: %03d====\n\e[0m", i);
-    auto txt = std::to_string(i) + "\n";
+    auto txt = std::to_string(i); // + "\n";
     lfs.writeToFile(txt.c_str(), txt.size());
     spiffs.writeToFile(txt.c_str(), txt.size());
   }
@@ -67,8 +67,10 @@ void app_main(void) {
   // /** READ (getc) **/
   // for (int i = 0; i < 1; i++) {
   printf("\e[0;34m====Read: %03d====\n\e[0m", 1);
-  lfs.ReadText(fileId);
-  spiffs.ReadText(fileId);
+  lfs.readFromFile();
+  spiffs.readFromFile();
+  // lfs.ReadText(fileId);
+  // spiffs.ReadText(fileId);
   // }
 
   /** DELETE (remove) **/

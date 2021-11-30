@@ -119,7 +119,8 @@ void FsHelperBase::openFile(uint32_t fileIndex) {
 
   if (!_currFileStream->is_open()) {
     // Open file in "append" mode.
-    _currFileStream->open(path.c_str(), fstream::out | fstream::app);
+    _currFileStream->open(path.c_str(),
+                          fstream::in | fstream::out | fstream::app);
     auto st  = _currFileStream->rdstate();
     auto len = _currFileStream->tellg();
     printf("_currFileStream->rdstate()=%d, len=%d\n", st, (int)len);
@@ -152,4 +153,20 @@ void FsHelperBase::writeToFile(const char* data, size_t size) {
   printf("Writing %d bytes to %s.\n", size, getPath(_fileIndex).c_str());
   _currFileStream->write(data, size);
   _currFileStream->flush();
+}
+
+void FsHelperBase::readFromFile() {
+  if (_currFileStream == nullptr || !_currFileStream->is_open()) {
+    printf("ERROR: No file open!");
+    return;
+  }
+
+  _currFileStream->seekp(0);
+
+  char data[1000];
+  auto len = _currFileStream->readsome(data, 1000);
+  printf("Reading %d bytes from %s.\n", len, getPath(_fileIndex).c_str());
+
+  data[len] = '\0';
+  printf("%s\n", data);
 }

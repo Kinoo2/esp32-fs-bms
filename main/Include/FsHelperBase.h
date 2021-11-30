@@ -23,6 +23,7 @@ public:
   void openFile(uint32_t fileIndex);
   void closeFile();
   void writeToFile(const char* data, size_t size);
+  void readFromFile();
 
 protected:
   const std::string& _basePath;
