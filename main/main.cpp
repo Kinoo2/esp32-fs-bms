@@ -1,4 +1,5 @@
 #include "lfs_helpers.h"
+#include "lipsum.h"
 #include "spiffs_helpers.h"
 
 #include <locale>
@@ -9,6 +10,8 @@
 #include <esp_spi_flash.h>
 #include <esp_system.h>
 #include <esp_vfs.h>
+#include <freertos/FreeRTOS.h>
+#include <freertos/task.h>
 #include <sdkconfig.h>
 
 #ifdef __cplusplus
@@ -57,12 +60,6 @@ void app_main(void) {
   /** WRITE (fprintf) **/
   lfs.openFile(fileId);
   spiffs.openFile(fileId);
-  for (int i = 0; i < iterations; i++) {
-    printf("\e[0;34m====Write: %03d====\n\e[0m", i);
-    auto txt = std::to_string(i); // + "\n";
-    lfs.writeToFile(txt.c_str(), txt.size());
-    spiffs.writeToFile(txt.c_str(), txt.size());
-  }
 
   // /** READ (getc) **/
   // for (int i = 0; i < 1; i++) {
@@ -73,6 +70,12 @@ void app_main(void) {
   // spiffs.ReadText(fileId);
   // }
 
+  // for (int i = 0; i < iterations; i++) {
+  // printf("\e[0;34m====Write: %03d====\n\e[0m", i);
+  // auto txt = std::to_string(i); // + "\n";
+  lfs.writeToFile(lipsum, 2048);
+  spiffs.writeToFile(lipsum, 2048);
+  // }
   /** DELETE (remove) **/
   // for (int i = 0; i < iterations; i++) {
   //   printf("\e[0;34m====Delete: %03d====\n\e[0m", i);
@@ -87,4 +90,6 @@ void app_main(void) {
   ESP_LOGI(TAG,
            "Minimum Heap Size: %d",
            heap_caps_get_minimum_free_size(MALLOC_CAP_8BIT));
+
+  vTaskDelay(portMAX_DELAY);
 }

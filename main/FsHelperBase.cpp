@@ -122,12 +122,12 @@ void FsHelperBase::openFile(uint32_t fileIndex) {
     _currFileStream->open(path.c_str(),
                           fstream::in | fstream::out | fstream::app);
     auto st  = _currFileStream->rdstate();
-    auto len = _currFileStream->tellg();
+    auto len = _currFileStream->tellp();
     printf("_currFileStream->rdstate()=%d, len=%d\n", st, (int)len);
 
-    _currFileStream->seekg(0, fstream::end);
+    _currFileStream->seekp(0, fstream::end);
     st  = _currFileStream->rdstate();
-    len = _currFileStream->tellg();
+    len = _currFileStream->tellp();
     printf("_currFileStream->rdstate()=%d, len=%d\n", st, (int)len);
 
     _fileIndex = fileIndex;
@@ -163,8 +163,8 @@ void FsHelperBase::readFromFile() {
 
   _currFileStream->seekp(0);
 
-  char data[1000];
-  auto len = _currFileStream->readsome(data, 1000);
+  char* data = (char*)malloc(10000);
+  auto len   = _currFileStream->readsome(data, 10000);
   printf("Reading %d bytes from %s.\n", len, getPath(_fileIndex).c_str());
 
   data[len] = '\0';
