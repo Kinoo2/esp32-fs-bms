@@ -20,13 +20,6 @@ extern "C" void app_main(void);
 
 static const char* TAG = "main";
 
-#define TRACE_RECORD_COUNT 300
-static heap_trace_record_t traceRecord[TRACE_RECORD_COUNT];
-
-static const int writeSize  = 100000;
-static const int iterations = 15;
-static const int maxFiles   = 60;
-
 void app_main(void) {
   setlocale(LC_NUMERIC, "");
 
@@ -51,7 +44,7 @@ void app_main(void) {
            esp_get_free_heap_size());
 
   LfsHelper lfs;
-  SpiffsHelper spiffs{maxFiles};
+  SpiffsHelper spiffs;
 
   int fileId = 1;
 
