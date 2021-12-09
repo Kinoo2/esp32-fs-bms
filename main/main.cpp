@@ -1,62 +1,44 @@
-#include "lfs_helpers.h"
-#include "lipsum.h"
-#include "spiffs_helpers.h"
+#include "lipsum.h" // This just contains the char* lipsum, which is a bunch of lorem ipsum.
 
-#include <locale>
-#include <string>
-#include <esp_err.h>
-#include <esp_heap_trace.h>
-#include <esp_log.h>
-#include <esp_spi_flash.h>
-#include <esp_system.h>
-#include <esp_vfs.h>
+#include <fstream>
+#include <esp_littlefs.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
-#include <sdkconfig.h>
 
 #ifdef __cplusplus
 extern "C" void app_main(void);
 #endif
 
-static const char* TAG = "main";
-
 void app_main(void) {
-  setlocale(LC_NUMERIC, "");
+  esp_vfs_littlefs_conf_t cfg;
+  cfg.base_path              = "/lfs";
+  cfg.partition_label        = "littlefs";
+  cfg.format_if_mount_failed = true;
+  cfg.dont_mount             = false;
+  esp_vfs_littlefs_register(&cfg);
 
-  esp_chip_info_t chip_info;
-  esp_chip_info(&chip_info);
-  ESP_LOGI(TAG,
-           "System Info:\n"
-           "\t\tchip: %s\n"
-           "\t\tnum cores: %d\n"
-           "\t\tWifi%s%s\n"
-           "\t\tSi rev: %d\n"
-           "\t\tFlash size: %dMB %s\n"
-           "\t\tFree heap: %d\n",
-           CONFIG_IDF_TARGET,
-           chip_info.cores,
-           (chip_info.features & CHIP_FEATURE_BT) ? "/BT" : "",
-           (chip_info.features & CHIP_FEATURE_BLE) ? "/BLE" : "",
-           chip_info.revision,
-           spi_flash_get_chip_size() / (1024 * 1024),
-           (chip_info.features & CHIP_FEATURE_EMB_FLASH) ? "embedded"
-                                                         : "external",
-           esp_get_free_heap_size());
+  std::fstream strm;
+  strm.open("/lfs/lips.txt",
+            std::fstream::in | std::fstream::out | std::fstream::app);
 
-  LfsHelper lfs;
-  SpiffsHelper spiffs;
+  printf("tellp:%d tellg:%d\n", (int)strm.tellp(), (int)strm.tellg());
 
-  int fileId = 1;
+  // Read.
+  strm.seekg(0);
+  char* data = (char*)malloc(10000);
+  auto len   = strm.readsome(data, 10000);
+  printf("Reading %d bytes.\n", len);
 
-  lfs.openFile(fileId);
-  spiffs.openFile(fileId);
+  data[len] = '\0';
+  printf("%s\n", data);
 
-  printf("\e[0;34m====Read: %03d====\n\e[0m", 1);
-  lfs.readFromFile();
-  spiffs.readFromFile();
+  // Write.
+  strm.write(lipsum, 2048);
+  strm.flush();
 
-  lfs.writeToFile(lipsum, 2048);
-  spiffs.writeToFile(lipsum, 2048);
+  // strm.close();
 
+  // Delay forever so the stream doesn't go out of scope and close
+  // automatically.
   vTaskDelay(portMAX_DELAY);
 }
